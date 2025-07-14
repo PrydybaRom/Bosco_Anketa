@@ -181,36 +181,47 @@
   });
 
   function calculateResult() {
-    const fullname = document.getElementById("fullname").value.trim();
-    if (!fullname) {
-      alert("Будь ласка, введіть прізвище та імʼя.");
+  const fullname = document.getElementById("fullname").value.trim();
+  if (!fullname) {
+    alert("Будь ласка, введіть прізвище та імʼя.");
+    return;
+  }
+
+  const scores = [];
+  for (let i = 1; i <= 20; i++) {
+    const selected = document.querySelector(`input[name='q${i}']:checked`);
+    if (!selected) {
+      alert("Будь ласка, заповніть усі відповіді.");
       return;
     }
-
-    const scores = [];
-    for (let i = 1; i <= 20; i++) {
-      const selected = document.querySelector(`input[name='q${i}']:checked`);
-      if (!selected) {
-        alert("Будь ласка, заповніть усі відповіді.");
-        return;
-      }
-      scores.push(parseInt(selected.value));
-    }
-
-    const logic = (scores[9] + scores[5]) / 2;
-    const creativity = (scores[7] + scores[13]) / 2;
-    const help = (scores[6] + scores[15]) / 2;
-    const tech = (scores[12] + scores[19]) / 2;
-
-    let profession = "Кухар";
-    if (logic >= 4 && tech >= 4) profession = "ІТ";
-    else if (tech >= 3.5 && creativity <= 3) profession = "Автомеханік";
-    else if (creativity >= 4) profession = "Столяр-дизайнер";
-    else if (help >= 4) profession = "Кухар";
-
-    document.getElementById("result").innerHTML =
-      `<strong>${fullname}</strong>, ваша рекомендована професія: <strong>${profession}</strong>`;
+    scores.push(parseInt(selected.value));
   }
+
+  const logic = (scores[9] + scores[5]) / 2;
+  const creativity = (scores[7] + scores[13]) / 2;
+  const help = (scores[6] + scores[15]) / 2;
+  const tech = (scores[12] + scores[19]) / 2;
+
+  let profession = "Кухар";
+  if (logic >= 4 && tech >= 4) profession = "ІТ";
+  else if (tech >= 3.5 && creativity <= 3) profession = "Автомеханік";
+  else if (creativity >= 4) profession = "Столяр-дизайнер";
+  else if (help >= 4) profession = "Кухар";
+
+  const resultDiv = document.getElementById("result");
+  resultDiv.innerHTML = `<strong>${fullname}</strong>, ваша рекомендована професія: <strong>${profession}</strong>`;
+
+  // 🔸 Відправка на Google Apps Script
+  fetch("https://script.google.com/macros/s/AKfycbwxI20TeZ-CxklooPgyKR_kJJq0KtLt9rMFCH3LfO3xPMu4--5a6CRjvz6QBFkwF_WuPg/exec", {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ fullname, profession })
+  });
+}
 </script>
 </body>
 </html>
+
