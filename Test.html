@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Профорієнтаційний тест</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #eafaf1;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border: 2px solid #b6e2c9;
+    }
+    h1 {
+      text-align: center;
+      color: #2f684e;
+    }
+    .question {
+      margin: 20px 0;
+      padding: 15px;
+      background-color: #f6fff9;
+      border-left: 5px solid #79c291;
+      border-radius: 6px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 10px;
+      color: #2f684e;
+    }
+    .options label {
+      font-weight: normal;
+      display: block;
+      background-color: #e4f7eb;
+      padding: 8px 12px;
+      margin: 5px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease-in-out;
+    }
+    .options input[type="radio"] {
+      margin-right: 8px;
+    }
+    .options label:hover {
+      background-color: #d4f2e0;
+      border-color: #a3d7b7;
+    }
+    button {
+      display: block;
+      margin: 30px auto;
+      padding: 12px 25px;
+      font-size: 1.1em;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    button:hover {
+      background-color: #3d8b40;
+    }
+    .result {
+      margin-top: 30px;
+      font-size: 1.2em;
+      text-align: center;
+      color: #2f684e;
+      background-color: #ecfdf2;
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid #b6e2c9;
+    }
+    input[type="text"] {
+      padding: 10px;
+      font-size: 1em;
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+
+    @media screen and (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+      button {
+        width: 100%;
+        font-size: 1em;
+      }
+      .question {
+        padding: 10px;
+      }
+      .result {
+        font-size: 1em;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Профорієнтаційний тест</h1>
+  <form id="testForm">
+    <div class="question">
+      <label for="fullname">Прізвище та імʼя:</label>
+      <input type="text" id="fullname" name="fullname" required>
+    </div>
+    <div id="questions"></div>
+    <button type="button" onclick="calculateResult()">Порахувати результат</button>
+  </form>
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+  const questionsData = [
+    "Я почуваюся комфортно, коли працюю самостійно",
+    "Мені подобається швидко вирішувати проблеми",
+    "Я легко пристосовуюся до змін",
+    "Я завжди доводжу справу до кінця",
+    "Мені важлива стабільність у житті",
+    "Я прагну постійного розвитку",
+    "Я люблю допомагати іншим",
+    "Мені подобається щось створювати",
+    "Я краще сприймаю інформацію через картинки",
+    "Мені подобаються логічні задачі",
+    "Я краще запам’ятовую, коли дію практично",
+    "Я часто думаю наперед і планую",
+    "Мене захоплюють технічні пристрої",
+    "Мені подобається створювати щось нове",
+    "Я люблю працювати з людьми",
+    "Я відчуваю потребу бути корисним",
+    "Я спокійно сприймаю критику",
+    "Я аналізую свої помилки",
+    "Я зберігаю спокій у стресових ситуаціях",
+    "Я швидко реагую у складних ситуаціях"
+  ];
+
+  const scaleOptions = [
+    { value: 1, text: "1 — зовсім не про мене" },
+    { value: 2, text: "2 — радше ні" },
+    { value: 3, text: "3 — частково" },
+    { value: 4, text: "4 — радше так" },
+    { value: 5, text: "5 — дуже про мене" }
+  ];
+
+  const questionsDiv = document.getElementById("questions");
+
+  questionsData.forEach((text, index) => {
+    const div = document.createElement("div");
+    div.className = "question";
+    const label = document.createElement("label");
+    label.textContent = `${index + 1}. ${text}`;
+
+    const optionsDiv = document.createElement("div");
+    optionsDiv.className = "options";
+
+    scaleOptions.forEach(opt => {
+      const optionLabel = document.createElement("label");
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = `q${index + 1}`;
+      radio.value = opt.value;
+      optionLabel.appendChild(radio);
+      optionLabel.appendChild(document.createTextNode(` ${opt.text}`));
+      optionsDiv.appendChild(optionLabel);
+    });
+
+    div.appendChild(label);
+    div.appendChild(optionsDiv);
+    questionsDiv.appendChild(div);
+  });
+
+  function calculateResult() {
+    const fullname = document.getElementById("fullname").value.trim();
+    if (!fullname) {
+      alert("Будь ласка, введіть прізвище та імʼя.");
+      return;
+    }
+
+    const scores = [];
+    for (let i = 1; i <= 20; i++) {
+      const selected = document.querySelector(`input[name='q${i}']:checked`);
+      if (!selected) {
+        alert("Будь ласка, заповніть усі відповіді.");
+        return;
+      }
+      scores.push(parseInt(selected.value));
+    }
+
+    const logic = (scores[9] + scores[5]) / 2;
+    const creativity = (scores[7] + scores[13]) / 2;
+    const help = (scores[6] + scores[15]) / 2;
+    const tech = (scores[12] + scores[19]) / 2;
+
+    let profession = "Кухар";
+    if (logic >= 4 && tech >= 4) profession = "ІТ";
+    else if (tech >= 3.5 && creativity <= 3) profession = "Автомеханік";
+    else if (creativity >= 4) profession = "Столяр-дизайнер";
+    else if (help >= 4) profession = "Кухар";
+
+    document.getElementById("result").innerHTML =
+      `<strong>${fullname}</strong>, ваша рекомендована професія: <strong>${profession}</strong>`;
+  }
+</script>
+</body>
+</html>
